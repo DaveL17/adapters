@@ -33,7 +33,7 @@ __copyright__ = "Not used."
 __license__   = "Apache 2.0"
 __build__     = "Not used."
 __title__     = 'Adapters Plugin for Indigo'
-__version__   = '2024.1.0'
+__version__   = '2025.1.0'
 
 
 # ==============================================================================
@@ -81,7 +81,7 @@ class Plugin(indigo.PluginBase):
         indigo.devices.subscribeToChanges()
 
     # ==============================================================================
-    def address_changed(self, values_dict: indigo.Dict = None, type_id: str = "", target_id: int = 0) -> None:
+    def address_changed(self, values_dict: indigo.Dict = None, type_id: str = "", target_id: int = 0) -> None:  # noqa
         """
         Docstring placeholder
 
@@ -111,8 +111,8 @@ class Plugin(indigo.PluginBase):
         example, a sensor changes (which would typically be logged by Indigo or another plugin) so an additional log
         message from this plugin would be overkill.
         """
-        log_format = '%(asctime)s.%(msecs)03d\t%(levelname)-10s\t%(name)s.%(funcName)-28s %(msg)s'
-        self.plugin_file_handler.setFormatter(logging.Formatter(log_format, datefmt='%Y-%m-%d %H:%M:%S'))
+        log_format = "%(asctime)s.%(msecs)03d\t%(levelname)-10s\t%(name)s.%(funcName)-28s %(msg)s"
+        self.plugin_file_handler.setFormatter(logging.Formatter(log_format, datefmt="%Y-%m-%d %H:%M:%S"))
 
         self.indigo_log_handler.setLevel(self.debug_level)
 
@@ -131,7 +131,8 @@ class Plugin(indigo.PluginBase):
 
         :param indigo.Device dev:
         """
-        self.logger.debug(f"device_start_comm: {dev.pluginProps['address']}")
+        self.logger.debug("device_start_comm: %s" % dev.pluginProps['address'])
+        self.active_adapters.append(dev)
 
         # in case any states added/removed after plugin upgrade
         dev.stateListOrDisplayStateIdChanged()
@@ -144,7 +145,7 @@ class Plugin(indigo.PluginBase):
 
         self.adapters_for_device[new_device.native_device_id].append(new_device)
 
-        self.logger.debug(f"added adapter: {new_device.name()}")
+        self.logger.debug("added adapter: %s" % new_device.name())
 
     # ==============================================================================
     def device_stop_comm(self, dev: indigo.Device) -> None:
@@ -161,7 +162,7 @@ class Plugin(indigo.PluginBase):
     # ==============================================================================
     @staticmethod
     def get_device_config_ui_values(
-            values_dict: indigo.Dict = None, user_cancelled: bool = False, type_id: str = "", dev_id: int = 0
+            values_dict: indigo.Dict = None, user_cancelled: bool = False, type_id: str = "", dev_id: int = 0  # noqa
     ) -> indigo.Dict:
         """
         Docstring placeholder
@@ -177,7 +178,7 @@ class Plugin(indigo.PluginBase):
 
     # ==============================================================================
     def get_eligible_sensors(
-            self, _filter: str = "", values_dict: indigo.Dict = None, type_id: str = "", target_id: int = 0
+            self, _filter: str = "", values_dict: indigo.Dict = None, type_id: str = "", target_id: int = 0  # noqa
     ) -> list:
         """
         Return a list of device/states with numeric values
@@ -203,7 +204,7 @@ class Plugin(indigo.PluginBase):
         return eligible_sensors
 
     # ==============================================================================
-    def get_scales(self, _filter: str = "", values_dict: indigo.Dict = None, type_id: str = "", target_id: int = 0) -> list:
+    def get_scales(self, _filter: str = "", values_dict: indigo.Dict = None, type_id: str = "", target_id: int = 0) -> list:  # noqa
         """
         Docstring placeholder
 
@@ -215,13 +216,13 @@ class Plugin(indigo.PluginBase):
         self.logger.debug("get_scales")
         if "scaleType" not in values_dict:
             return []
-        self.logger.debug(f"getting scale options for scale type: {values_dict['scaleType']}")
+        self.logger.debug("getting scale options for scale type: %s" % values_dict['scaleType'])
         opts = get_scale_options(scale_type=values_dict["scaleType"])
-        self.logger.debug(f"scale options: {opts}")
+        self.logger.debug("scale options: %s" % opts)
         return opts
 
     # ==============================================================================
-    def open_browser_to_python_format_help(self, values_dict: indigo.Dict = None, type_id: str = "", target_id: int = 0) -> None:
+    def open_browser_to_python_format_help(self, values_dict: indigo.Dict = None, type_id: str = "", target_id: int = 0) -> None:  # noqa
         """
         Docstring placeholder
 
@@ -232,14 +233,14 @@ class Plugin(indigo.PluginBase):
         self.browserOpen("https://pyformat.info")
 
     # ==============================================================================
-    def scale_type_changed(self, values_dict=None, type_id="", target_id=0) -> None:
+    def scale_type_changed(self, values_dict=None, type_id="", target_id=0) -> None:  # noqa
         """
         Called by Devices.xml when a Predefined Scale Adapter scale type is changed.
         """
         self.logger.debug("scale_type_changed")
 
     # ==============================================================================
-    def show_formula_result(self, values_dict: indigo.Dict = None, type_id: str = "", target_id: int = 0):
+    def show_formula_result(self, values_dict: indigo.Dict = None, type_id: str = "", target_id: int = 0):  # noqa
         """
         Test adapter device conversion settings
 
@@ -272,7 +273,7 @@ class Plugin(indigo.PluginBase):
             result = simpleeval.simple_eval(val_formula, names={"x": val_value})
         except Exception as err:
             error_msg_dict['formula'] = f"Invalid Formula Expression: {err}"
-            self.logger.debug(f"Invalid Formula: {val_formula}")
+            self.logger.debug("Invalid Formula: %s" % val_formula)
             return values_dict, error_msg_dict
 
         # Evaluate the format expression
@@ -282,7 +283,7 @@ class Plugin(indigo.PluginBase):
                 raise Exception
         except Exception as err:
             error_msg_dict['format'] = f"Invalid Format Expression: {err}"
-            self.logger.debug(f"Invalid Format Specifier: {formatter}")
+            self.logger.debug("Invalid Format Specifier: %s" % formatter)
             return values_dict, error_msg_dict
 
         values_dict['formula_test'] = result
@@ -302,12 +303,13 @@ class Plugin(indigo.PluginBase):
             self.sensor_logger.setLevel(self.debug_level)
             self.pyrescaler_logger.setLevel(self.debug_level)
             return True, values_dict
-        except TypeError as error:
+        except TypeError:
             error_msg_dict['showDebugLevel'] = "The debug level is invalid"
             return False, values_dict, error_msg_dict
 
     # ==============================================================================
-    def my_tests(self, action=None):
+    def my_tests(self, action=None):  # noqa
+        """PLACEHOLDER"""
         from Tests import test_plugin
         plugin_tests = test_plugin.TestPlugin()
         simple_eval_tests = test_plugin.TestSimpleEval()
@@ -315,9 +317,9 @@ class Plugin(indigo.PluginBase):
 
         def process_test_result(result, name):
             if result[0] is True:
-                self.logger.warning(f"{name} tests passed.")
+                self.logger.warning("%s tests passed." % name)
             else:
-                self.logger.warning(f"{result[1]}")
+                self.logger.warning("%s" % result[1])
 
         test = plugin_tests.test_plugin(self)
         process_test_result(test, "Plugin")

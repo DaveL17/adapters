@@ -1,3 +1,6 @@
+### 2025.1.0
+- Stability and performance enhancements
+
 ### 2024.1.0
 - Removes unneeded PyCharm debugging code.
 - Cleans up .gitignore file.
