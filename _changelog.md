@@ -1,5 +1,6 @@
 ### 2025.1.0
-- Stability and performance enhancements
+- Stability and performance enhancements.
+- Code cleanup.
 
 ### 2024.1.0
 - Removes unneeded PyCharm debugging code.
