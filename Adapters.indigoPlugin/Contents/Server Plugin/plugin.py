@@ -306,26 +306,3 @@ class Plugin(indigo.PluginBase):
         except TypeError:
             error_msg_dict['showDebugLevel'] = "The debug level is invalid"
             return False, values_dict, error_msg_dict
-
-    # ==============================================================================
-    def my_tests(self, action=None):  # noqa
-        """PLACEHOLDER"""
-        from Tests import test_plugin
-        plugin_tests = test_plugin.TestPlugin()
-        simple_eval_tests = test_plugin.TestSimpleEval()
-        # sensor_adapter_tests = test_plugin.TestSensorAdapter()
-
-        def process_test_result(result, name):
-            if result[0] is True:
-                self.logger.warning("%s tests passed." % name)
-            else:
-                self.logger.warning("%s" % result[1])
-
-        test = plugin_tests.test_plugin(self)
-        process_test_result(test, "Plugin")
-        test = simple_eval_tests.test_simple_eval(self)
-        process_test_result(test, "Simple Eval")
-        # test = sensor_adapter_tests.test_sensor_adapter(self)  # There are no sensor adapter tests at this time.
-        # process_test_result(test, "Sensor Adapter")
-        self.logger.warning("There are no Sensor Adapter tests yet.")
-        self.logger.warning("There are no pyrescaler tests yet.")

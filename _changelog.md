@@ -1,3 +1,5 @@
+### 2025.2.0
+
 ### 2025.1.0
 - Stability and performance enhancements.
 - Code cleanup.
