@@ -1,4 +1,7 @@
 ### 2025.2.0
+- Removes Actions.xml and MenuItems.xml server plugin files.
+- Updates simpleeval for Python 3 compatibility.
+- Code cleanup and bug fixes.
 
 ### 2025.1.0
 - Stability and performance enhancements.
