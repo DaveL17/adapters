@@ -32,10 +32,15 @@ class TestPlugin(APIBase):
 
     # Create a test device of type Predefined Scale Adapter (`tempConvertedSensor`)
     def test_device_creation(self):
-        """Verify that a tempConvertedSensor device can be created and deleted via the Indigo API."""
+        """Verify that a tempConvertedSensor device can be created and deleted via the Indigo API.
+
+        Note that `SupportsSensorValue` is required for programmatic device creation in order to create the
+        `sensorValue` state.
+        """
         plugin_id = os.getenv("PLUGIN_ID")
         my_name = "'adapters_unit_test_create_device'"
-        my_props = {'address': os.getenv('DEVICE_CREATE_ID'),
+        my_props = {'SupportsSensorValue': True,
+                    'address': os.getenv('DEVICE_CREATE_ID'),
                     'scaleType': 'length',
                     'nativeScale': 'mi',
                     'desiredScale': 'km',
