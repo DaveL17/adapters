@@ -162,13 +162,13 @@ class TestPyRescaler(APIBase):
         """Test get_converter() for temperature, matching _PredefinedDelegate usage."""
         # F -> C
         converter = get_converter('temperature', 'F', 'C', precision=1)
-        self.assertAlmostEqual(converter.convert(32),  0.0,   places=1, msg="32°F should convert to 0°C.")
-        self.assertAlmostEqual(converter.convert(212), 100.0, places=1, msg="212°F should convert to 100°C.")
+        self.assertAlmostEqual(converter.convert(32),  0.0,   1, "32°F should convert to 0°C.")
+        self.assertAlmostEqual(converter.convert(212), 100.0, 1, "212°F should convert to 100°C.")
 
         # C -> F
         converter = get_converter('temperature', 'C', 'F', precision=1)
-        self.assertAlmostEqual(converter.convert(0),   32.0,  places=1, msg="0°C should convert to 32°F.")
-        self.assertAlmostEqual(converter.convert(100), 212.0, places=1, msg="100°C should convert to 212°F.")
+        self.assertAlmostEqual(converter.convert(0),   32.0,  1, "0°C should convert to 32°F.")
+        self.assertAlmostEqual(converter.convert(100), 212.0, 1, "100°C should convert to 212°F.")
 
         # suffix() / suffix_native() — used in _PredefinedDelegate.name()
         converter = get_converter('temperature', 'F', 'C', precision=1)
@@ -184,38 +184,38 @@ class TestPyRescaler(APIBase):
     def test_get_converter_length(self):
         """Test get_converter() for length, matching _PredefinedDelegate usage."""
         converter = get_converter('length', 'mi', 'km', precision=3)
-        self.assertAlmostEqual(converter.convert(1), 1.609, places=2, msg="1 mile should convert to ~1.609 km.")
+        self.assertAlmostEqual(converter.convert(1), 1.609, 2, "1 mile should convert to ~1.609 km.")
 
         converter = get_converter('length', 'ft', 'm', precision=2)
-        self.assertAlmostEqual(converter.convert(1), 0.3048, places=3, msg="1 ft should convert to 0.3048 m.")
+        self.assertAlmostEqual(converter.convert(1), 0.3048, 3, "1 ft should convert to 0.3048 m.")
 
     # ===================================== get_converter() — power =====================================
     def test_get_converter_power(self):
         """Test get_converter() for power, matching _PredefinedDelegate usage."""
         converter = get_converter('power', 'W', 'kW', precision=3)
-        self.assertAlmostEqual(converter.convert(1000), 1.0, places=3, msg="1000 W should convert to 1 kW.")
+        self.assertAlmostEqual(converter.convert(1000), 1.0, 3, "1000 W should convert to 1 kW.")
 
         converter = get_converter('power', 'kW', 'W', precision=0)
-        self.assertAlmostEqual(converter.convert(1), 1000.0, places=0, msg="1 kW should convert to 1000 W.")
+        self.assertAlmostEqual(converter.convert(1), 1000.0, 0, "1 kW should convert to 1000 W.")
 
     # ===================================== AffineScaledMeasurement =====================================
     def test_affine_scaled_measurement(self):
         """Test AffineScaledMeasurement with the constructor args _AffineTransformDelegate passes."""
         # identity
         m = AffineScaledMeasurement(multiplier=1.0, offset=0.0, format_string="{0:.1f}")
-        self.assertAlmostEqual(m.convert(42), 42.0, places=5, msg="Identity transform should return input unchanged.")
+        self.assertAlmostEqual(m.convert(42), 42.0, 5, "Identity transform should return input unchanged.")
 
         # scale only
         m = AffineScaledMeasurement(multiplier=2.0, offset=0.0, format_string="{0:.1f}")
-        self.assertAlmostEqual(m.convert(5), 10.0, places=5, msg="multiplier=2 should double the input.")
+        self.assertAlmostEqual(m.convert(5), 10.0, 5, "multiplier=2 should double the input.")
 
         # offset only
         m = AffineScaledMeasurement(multiplier=1.0, offset=10.0, format_string="{0:.1f}")
-        self.assertAlmostEqual(m.convert(5), 15.0, places=5, msg="offset=10 should add 10 to the input.")
+        self.assertAlmostEqual(m.convert(5), 15.0, 5, "offset=10 should add 10 to the input.")
 
         # string props from pluginProps (plugin passes raw strings from device config)
         m = AffineScaledMeasurement(multiplier='1.8', offset='32', format_string="{0:.1f} °F")
-        self.assertAlmostEqual(m.convert(0), 32.0, places=5, msg="String multiplier/offset should be coerced to float.")
+        self.assertAlmostEqual(m.convert(0), 32.0, 5, "String multiplier/offset should be coerced to float.")
 
         # format() applies the format_string from pluginProps
         m = AffineScaledMeasurement(multiplier=2.0, offset=0.0, format_string="{0:.2f} units")
@@ -226,12 +226,12 @@ class TestPyRescaler(APIBase):
         """Test ArbitraryFormulaScaledMeasurement with formulas matching Devices.xml examples."""
         # default formula shown in Devices.xml
         m = ArbitraryFormulaScaledMeasurement(formula="(9/5 * x) + 32", format_string="{0:.1f}")
-        self.assertAlmostEqual(m.convert(0),   32.0,  places=5, msg="C->F formula: 0°C should yield 32°F.")
-        self.assertAlmostEqual(m.convert(100), 212.0, places=5, msg="C->F formula: 100°C should yield 212°F.")
+        self.assertAlmostEqual(m.convert(0),   32.0,  5, "C->F formula: 0°C should yield 32°F.")
+        self.assertAlmostEqual(m.convert(100), 212.0, 5, "C->F formula: 100°C should yield 212°F.")
 
         # polynomial example from Devices.xml
         m = ArbitraryFormulaScaledMeasurement(formula="x ** 2 + 3 * x + 4", format_string="{0:.1f}")
-        self.assertAlmostEqual(m.convert(2), 14.0, places=5, msg="Polynomial formula: f(2) should equal 14.")
+        self.assertAlmostEqual(m.convert(2), 14.0, 5, "Polynomial formula: f(2) should equal 14.")
 
         # conditional example from Devices.xml
         m = ArbitraryFormulaScaledMeasurement(formula="1 if x == 2 else -1", format_string="{0:.1f}")
@@ -284,10 +284,8 @@ class TestSensorAdapter(APIBase):
             from sensor_adapter import _PredefinedDelegate
             _PredefinedDelegate(dev, adapter)
 
-        self.assertAlmostEqual(adapter.desired_scale.convert(32),  0.0,   places=1,
-                               msg="32°F should convert to 0°C.")
-        self.assertAlmostEqual(adapter.desired_scale.convert(212), 100.0, places=1,
-                               msg="212°F should convert to 100°C.")
+        self.assertAlmostEqual(adapter.desired_scale.convert(32),  0.0,   1, "32°F should convert to 0°C.")
+        self.assertAlmostEqual(adapter.desired_scale.convert(212), 100.0, 1, "212°F should convert to 100°C.")
 
     def test_predefined_delegate_sets_precision(self):
         """_PredefinedDelegate writes the precision from pluginProps back onto the adapter."""
@@ -343,8 +341,7 @@ class TestSensorAdapter(APIBase):
             from sensor_adapter import _AffineTransformDelegate
             _AffineTransformDelegate(dev, adapter)
 
-        self.assertAlmostEqual(adapter.desired_scale.convert(5), 20.0, places=5,
-                               msg="(5 * 2.0) + 10.0 should equal 20.0.")
+        self.assertAlmostEqual(adapter.desired_scale.convert(5), 20.0, 5, "(5 * 2.0) + 10.0 should equal 20.0.")
         self.assertEqual(adapter.desired_scale.format(5), "20.0 units",
                          "format() should apply the configured format_string.")
 
@@ -382,10 +379,8 @@ class TestSensorAdapter(APIBase):
             from sensor_adapter import _FormulaDelegate
             _FormulaDelegate(dev, adapter)
 
-        self.assertAlmostEqual(adapter.desired_scale.convert(0),   32.0,  places=5,
-                               msg="C->F formula: 0°C should yield 32°F.")
-        self.assertAlmostEqual(adapter.desired_scale.convert(100), 212.0, places=5,
-                               msg="C->F formula: 100°C should yield 212°F.")
+        self.assertAlmostEqual(adapter.desired_scale.convert(0),   32.0,  5, "C->F formula: 0°C should yield 32°F.")
+        self.assertAlmostEqual(adapter.desired_scale.convert(100), 212.0, 5, "C->F formula: 100°C should yield 212°F.")
         self.assertEqual(adapter.desired_scale.format(0), "32.0 °F",
                          "format() should apply the configured format_string.")
 
